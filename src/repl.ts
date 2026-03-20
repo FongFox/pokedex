@@ -1,6 +1,5 @@
 import console from "node:console";
-import { createInterface } from "node:readline";
-import { CLICommand, getCommands } from "./command.js";
+import { State } from "./state.js";
 
 export function cleanInput(input: string): string[] {
     // 1. Loại bỏ các ký tự lạ, chỉ giữ lại chữ cái (a-z), số (0-9) và khoảng trắng
@@ -15,16 +14,11 @@ export function isEmpty(input: string[]): boolean {
     return input.length === 0 ? true : false;
 }
 
-export function startREPL(): void {
-    const rl = createInterface({
-        input: process.stdin,   // đọc từ terminal
-        output: process.stdout, // in ra terminal
-        prompt: "Pokedex > ",   // dấu nhắc hiển thị cho người dùng
-    });
+export function startREPL(state: State): void {
+    const rl = state.readline;
 
     rl.prompt(); // User type input
 
-    const cliCommands= getCommands();
     rl.on("line", (line) => {
         const words = cleanInput(line);
         if (isEmpty(words)) {
@@ -35,9 +29,9 @@ export function startREPL(): void {
         const firstWord = words[0];
 
         // Thêm dòng này để debug
-        // console.log(`Debug: searching for key '${firstWord}' in`, Object.keys(cliCommands));
+        // console.log(`Debug: searching for key '${firstWord}' in`, Object.keys(state));
 
-        const command = cliCommands[firstWord];
+        const command = state.commands[firstWord];
         if(!command) {
             console.log("Unknown command");
             rl.prompt();
@@ -45,7 +39,7 @@ export function startREPL(): void {
         }
 
         try {
-            command.callback(cliCommands);
+            command.callback(state);
             rl.prompt();
         } catch (error) {
             console.log(error);
