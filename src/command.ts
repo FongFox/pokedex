@@ -13,7 +13,12 @@ export function getCommands(): Record<string, CLICommand> {
       name: "help",
       description: "Displays a help message",
       callback: commandHelp,
-    }
+    },
+    // Todo
+    // map: {
+    //   name: "map",
+    //   description: "Displays the names of 20 location areas in the Pokemon world"
+    // }
     // can add more commands here
   };
 }
